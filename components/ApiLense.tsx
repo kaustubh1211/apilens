@@ -10,14 +10,16 @@ import GraphView from '@/components/GraphView';
 import ViewTabs from '@/components/ViewTabs';
 import SearchBar from '@/components/SearchBar';
 import StatsPanel from './StatsPanner';
+import ViewToolbar from './ViewToolBar';
 import { analyzeData } from '@/libs/Analyzer';
 import { toast } from 'sonner';
-import { Code2, ArrowLeft } from 'lucide-react';
+import { Code2, ArrowLeft, X } from 'lucide-react';
 
 export default function ApiLensApp() {
   const [responseData, setResponseData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'tree' | 'table' | 'raw' | 'graph'>('tree');
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   const handleResponse = (response: any) => {
     setResponseData(response);
@@ -62,52 +64,84 @@ export default function ApiLensApp() {
         {responseData && (
           <>
             {/* Stats */}
-            <StatsPanel
-              data={responseData.data}
-              status={responseData.status}
-              time={responseData.time}
-              size={responseData.size}
-            />
+            {!isFullscreen && (
+              <StatsPanel
+                data={responseData.data}
+                status={responseData.status}
+                time={responseData.time}
+                size={responseData.size}
+              />
+            )}
 
             {/* Viewer */}
-            <div className="bg-gray-950 border border-gray-900 rounded-lg overflow-hidden">
+            <div className={`bg-gray-950 border border-gray-900 rounded-lg overflow-hidden ${
+              isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''
+            }`}>
               {/* Toolbar */}
-              <div className="border-b border-gray-900 p-4">
-                {activeTab === 'tree' ? (
-                  <SearchBar value={searchQuery} onChange={setSearchQuery} />
-                ) : (
-                  <div className="h-10"></div>
+              <div className="border-b border-gray-900 p-4 flex items-center justify-between gap-4">
+                <div className="flex-1">
+                  {activeTab === 'tree' && !isFullscreen && (
+                    <SearchBar value={searchQuery} onChange={setSearchQuery} />
+                  )}
+                </div>
+                
+                <ViewToolbar 
+                  data={responseData.data}
+                  onFullscreenToggle={setIsFullscreen}
+                />
+
+                {isFullscreen && (
+                  <button
+                    onClick={() => setIsFullscreen(false)}
+                    className="p-2 hover:bg-gray-900 rounded-lg transition-colors"
+                  >
+                    <X className="w-5 h-5 text-gray-400" />
+                  </button>
                 )}
               </div>
 
               {/* Tabs */}
-              <ViewTabs 
-                activeTab={activeTab} 
-                onTabChange={(tab) => {
-                  setActiveTab(tab);
-                  setSearchQuery('');
-                }}
-                showTable={showTableTab}
-              />
+              {!isFullscreen && (
+                <ViewTabs 
+                  activeTab={activeTab} 
+                  onTabChange={(tab) => {
+                    setActiveTab(tab);
+                    setSearchQuery('');
+                  }}
+                  showTable={showTableTab}
+                />
+              )}
 
               {/* Content */}
-              {activeTab === 'tree' && (
-                <div className="p-6 max-h-[70vh] overflow-auto custom-scrollbar">
-                  <TreeView data={responseData.data} searchQuery={searchQuery} />
-                </div>
-              )}
+              <div className={isFullscreen ? 'h-[calc(100vh-80px)]' : ''}>
+                {activeTab === 'tree' && (
+                  <div className={`p-6 overflow-auto custom-scrollbar ${
+                    isFullscreen ? 'h-full' : 'max-h-[70vh]'
+                  }`}>
+                    <TreeView data={responseData.data} searchQuery={searchQuery} />
+                  </div>
+                )}
 
-              {activeTab === 'table' && showTableTab && (
-                <div className="max-h-[70vh] overflow-auto custom-scrollbar">
-                  <TableView data={responseData.data} />
-                </div>
-              )}
+                {activeTab === 'table' && showTableTab && (
+                  <div className={`overflow-auto custom-scrollbar ${
+                    isFullscreen ? 'h-full' : 'max-h-[70vh]'
+                  }`}>
+                    <TableView data={responseData.data} />
+                  </div>
+                )}
 
-              {activeTab === 'graph' && (
-                <GraphView data={responseData.data} />
-              )}
+                {activeTab === 'graph' && (
+                  <div className={isFullscreen ? 'h-full' : 'h-[70vh]'}>
+                    <GraphView data={responseData.data} />
+                  </div>
+                )}
 
-              {activeTab === 'raw' && <RawView data={responseData.data} />}
+                {activeTab === 'raw' && (
+                  <div className={isFullscreen ? 'h-full' : ''}>
+                    <RawView data={responseData.data} />
+                  </div>
+                )}
+              </div>
             </div>
           </>
         )}

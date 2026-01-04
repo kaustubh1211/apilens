@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
 
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #030712;
+  background: #000000;
 }
 
-/* Custom Scrollbar - Developer Style */
+/* Custom Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -26,57 +27,44 @@ body {
   background: #6b7280;
 }
 
-/* Selection Color */
-::selection {
-  background: #3b82f6;
-  color: white;
-}
-
-/* Smooth Transitions */
-* {
-  transition-property: color, background-color, border-color;
-  transition-duration: 150ms;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
-
-
-
-/* ReactFlow Custom Styles */
-.react-flow__node {
-  font-family: 'Monaco', 'Menlo', monospace;
-}
-
-.react-flow__edge-path {
-  stroke: #333 !important;
-}
-
-.react-flow__handle {
-  background: #666 !important;
-  width: 6px !important;
-  height: 6px !important;
+/* ReactFlow - Clean Light Theme */
+.react-flow__attribution {
+  display: none !important;
 }
 
 .react-flow__controls {
-  background: #1a1a1a !important;
-  border: 1px solid #333 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
 .react-flow__controls-button {
-  background: #0a0a0a !important;
-  border-bottom: 1px solid #333 !important;
-  color: white !important;
+  background: white !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  color: #374151 !important;
+  width: 28px !important;
+  height: 28px !important;
 }
 
 .react-flow__controls-button:hover {
-  background: #262626 !important;
+  background: #f9fafb !important;
+}
+
+.react-flow__controls-button svg {
+  max-width: 14px !important;
+  max-height: 14px !important;
 }
 
 .react-flow__minimap {
-  background: #0a0a0a !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
 
-.react-flow__attribution {
-  display: none !important;
+.react-flow__edge-path {
+  stroke: #9ca3af !important;
+  stroke-width: 2 !important;
+}
+
+.react-flow__handle {
+  width: 10px !important;
+  height: 10px !important;
+  background: #9ca3af !important;
+  border: 2px solid white !important;
 }
