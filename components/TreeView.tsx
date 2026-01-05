@@ -5,7 +5,7 @@ import { ChevronRight, ChevronDown, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface TreeViewProps {
-  data: any;
+  data: unknown;
   searchQuery?: string;
 }
 
@@ -18,17 +18,18 @@ export default function TreeView({ data, searchQuery = '' }: TreeViewProps) {
 }
 
 interface TreeNodeProps {
-  data: any;
+  data: unknown;
   path: string;
   isLast?: boolean;
   searchQuery?: string;
 }
 
+
 function TreeNode({ data, path, isLast = true, searchQuery = '' }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = (value: any) => {
+  const handleCopy = (value: unknown) => {
     const textValue = typeof value === 'string' ? value : JSON.stringify(value, null, 2);
     navigator.clipboard.writeText(textValue);
     setCopied(true);
@@ -36,7 +37,7 @@ function TreeNode({ data, path, isLast = true, searchQuery = '' }: TreeNodeProps
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const getType = (value: any): string => {
+  const getType = (value: unknown): string => {
     if (value === null) return 'null';
     if (Array.isArray(value)) return 'array';
     return typeof value;
@@ -86,9 +87,12 @@ function TreeNode({ data, path, isLast = true, searchQuery = '' }: TreeNodeProps
     );
   }
 
-  const entries = type === 'array' 
-    ? data.map((item: any, index: number) => [index, item])
-    : Object.entries(data);
+ const entries: [string | number, unknown][] =
+  type === 'array' && Array.isArray(data)
+    ? data.map((item, index) => [index, item])
+    : typeof data === 'object' && data !== null
+      ? Object.entries(data as Record<string, unknown>)
+      : [];
 
   const isEmpty = entries.length === 0;
 
