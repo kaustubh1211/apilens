@@ -1,0 +1,23 @@
+{
+  "name": "ApiLens - JSON API Visualizer",
+  "short_name": "ApiLens",
+  "description": "Beautiful JSON API visualizer and inspector tool",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo/api-lens.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo/api-lens.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

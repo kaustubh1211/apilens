@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Activity, Github } from 'lucide-react';
+import Image from 'next/image';
 
 export default function Navbar() {
   return (
@@ -9,15 +10,20 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-slate-900 rounded-lg flex items-center justify-center">
-              <Activity className="w-5 h-5 text-white" strokeWidth={2.5} />
-            </div>
-            <div>
-              <span className="text-xl font-bold text-slate-900">ApiLens</span>
-            </div>
-          </Link>
-          
+         <Link href="/" className="flex items-center gap-3 group">
+    <Image
+      src="/logo/api-lens.png"
+      alt="ApiLens"
+      width={40}
+      height={40}
+      priority
+      className=" object-fill rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow"
+    />
+ 
+  <span className="text-2xl font-bold text-slate-900">
+    ApiLens
+  </span>
+</Link>
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-8">
             <a 

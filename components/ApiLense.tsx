@@ -14,6 +14,7 @@ import ViewToolbar from './ViewToolBar';
 import { analyzeData } from '@/libs/Analyzer';
 import { toast } from 'sonner';
 import { Code2, ArrowLeft, X } from 'lucide-react';
+import Image from 'next/image';
 
 export default function ApiLensApp() {
   const [responseData, setResponseData] = useState<any>(null);
@@ -45,11 +46,20 @@ export default function ApiLensApp() {
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
           </Link>
-          
-          <div className="flex items-center gap-2">
-            <Code2 className="w-5 h-5 text-white" />
-            <span className="font-bold">ApiLens</span>
-          </div>
+     <Link href="/" className="flex items-center gap-3 group">
+    <Image
+      src="/logo/api-lens.png"
+      alt="ApiLens"
+      width={40}
+      height={40}
+      priority
+      className=" object-fill rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow"
+    />
+ 
+  <span className="text-2xl font-bold  text-neutral-300">
+    ApiLens
+  </span>
+</Link>
           
           <div className="w-16"></div>
         </div>
