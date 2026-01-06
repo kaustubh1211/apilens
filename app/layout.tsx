@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     description: 'Free online tool to visualize, format, and explore JSON APIs with interactive views. Alternative to Postman for API testing.',
     images: [
       {
-        url: '/logo/api-lens.png',
+        url: 'https://apilens.kaustubhp.in/og-image.png',
         width: 1200,
         height: 630,
         alt: 'ApiLens - JSON Visualizer',
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'ApiLens - Beautiful JSON API Visualizer',
     description: 'Visualize, format, and explore JSON APIs with interactive tree, table, and graph views.',
-    images: ['/logo/api-lens.png'],
+    images: ['https://apilens.kaustubhp.in/og-image.png'],
     creator: '@kaustubh1111', 
   },
   robots: {

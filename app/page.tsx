@@ -29,7 +29,7 @@ export default function Home() {
     description: 'Free online JSON API visualizer and inspector tool with tree view, table view, and graph visualization.',
     url: 'https://apilens.kaustubhp.in',
     logo: 'https://apilens.kaustubhp.in/logo/api-lens.png',
-    screenshot: 'https://apilens.kaustubhp.in/logo/api-lens.png',
+    screenshot: 'https://apilens.kaustubhp.in/og-image.png',
     author: {
       '@type': 'Person',
       name: 'Kaustubh Patil',
