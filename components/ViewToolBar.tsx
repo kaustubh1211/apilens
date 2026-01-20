@@ -41,8 +41,8 @@ export default function ViewToolbar({
   };
 
   return (
-    <div className="flex items-center justify-between gap-4">
-      <div className="flex items-center gap-2">
+    <div className="flex items-center justify-between gap-3 flex-wrap sm:flex-nowrap">
+      <div className="flex items-center gap-2 flex-wrap">
         {showCopy && (
           <button
             onClick={handleCopy}
@@ -51,12 +51,12 @@ export default function ViewToolbar({
             {copied ? (
               <>
                 <Check className="w-4 h-4 text-green-500" />
-                <span>Copied</span>
+                <span className="hidden sm:inline">Copied</span>
               </>
             ) : (
               <>
                 <Copy className="w-4 h-4" />
-                <span>Copy JSON</span>
+                <span className="hidden sm:inline">Copy JSON</span>
               </>
             )}
           </button>
@@ -68,7 +68,7 @@ export default function ViewToolbar({
             className="flex items-center gap-2 px-3 py-2 bg-gray-900 hover:bg-gray-800 text-gray-300 text-sm font-medium rounded-lg transition-colors border border-gray-800"
           >
             <Download className="w-4 h-4" />
-            <span>Download</span>
+            <span className="hidden sm:inline">Download</span>
           </button>
         )}
       </div>

@@ -40,34 +40,34 @@ export default function ApiLensApp() {
     <div className="min-h-screen bg-black text-white">
       {/* Top Bar */}
       <div className="border-b border-neutral-900">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
           </Link>
-     <Link href="/" className="flex items-center gap-3 group">
-    <Image
-      src="/logo/api-lens.png"
-      alt="ApiLens"
-      width={40}
-      height={40}
-      priority
-      className=" object-fill rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow"
-    />
- 
-  <span className="text-2xl font-bold  text-neutral-300">
-    ApiLens
-  </span>
-</Link>
-          
-          <div className="w-16"></div>
+          <Link href="/" className="flex items-center gap-2 sm:gap-3 group min-w-0">
+            <Image
+              src="/logo/api-lens.png"
+              alt="ApiLens"
+              width={34}
+              height={34}
+              priority
+              className="object-fill rounded-xl shadow-md group-hover:shadow-lg transition-shadow"
+            />
+            <span className="text-lg sm:text-2xl font-bold text-neutral-300 truncate">
+              ApiLens
+            </span>
+          </Link>
+
+          {/* spacer to keep center alignment */}
+          <div className="w-10 sm:w-16" />
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-8 space-y-5 sm:space-y-6">
         {/* Request Form */}
-        <div className="bg-neutral-950 border border-neutral-900 rounded-lg p-6">
+        <div className="bg-neutral-950 border border-neutral-900 rounded-lg p-4 sm:p-6">
           <ApiForm onResponse={handleResponse} onError={handleError} />
         </div>
 
@@ -89,8 +89,8 @@ export default function ApiLensApp() {
               isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''
             }`}>
               {/* Toolbar */}
-              <div className="border-b border-neutral-900 p-4 flex items-center justify-between gap-4">
-                <div className="flex-1">
+              <div className="border-b border-neutral-900 p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                <div className="flex-1 min-w-0">
                   {activeTab === 'tree' && !isFullscreen && (
                     <SearchBar value={searchQuery} onChange={setSearchQuery} />
                   )}
@@ -117,7 +117,7 @@ export default function ApiLensApp() {
               {/* Content */}
               <div className={isFullscreen ? 'h-[calc(100vh-80px)]' : ''}>
                 {activeTab === 'tree' && (
-                  <div className={`p-6 overflow-auto custom-scrollbar ${
+                  <div className={`p-3 sm:p-6 overflow-auto custom-scrollbar ${
                     isFullscreen ? 'h-full' : 'max-h-[70vh]'
                   }`}>
                     <TreeView key={responseKey} data={responseData.data} searchQuery={searchQuery} />

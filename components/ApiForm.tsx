@@ -187,12 +187,12 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
       {mode === 'url' && (
         <div className="space-y-3">
           {/* Method + URL Row */}
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <select
               value={method}
               onChange={(e) => setMethod(e.target.value as any)}
               disabled={loading}
-              className="w-28 px-3 py-2.5 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded focus:border-neutral-500 focus:outline-none text-sm font-semibold"
+              className="w-full sm:w-28 px-3 py-2.5 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded focus:border-neutral-500 focus:outline-none text-sm font-semibold"
             >
               <option>GET</option>
               <option>POST</option>
@@ -206,12 +206,12 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
               onChange={(e) => setUrl(e.target.value)}
               placeholder="https://api.example.com/endpoint"
               disabled={loading}
-              className="flex-1 px-4 py-2.5 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded placeholder-neutral-600 focus:border-neutral-500 focus:outline-none text-sm font-mono"
+              className="w-full sm:flex-1 px-4 py-2.5 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded placeholder-neutral-600 focus:border-neutral-500 focus:outline-none text-sm font-mono"
             />
 
             <button
               onClick={() => setShowHeaders(!showHeaders)}
-              className={`px-4 py-2.5 rounded text-sm font-medium transition-colors ${
+              className={`w-full sm:w-auto px-4 py-2.5 rounded text-sm font-medium transition-colors ${
                 showHeaders || headers.length > 0
                   ? 'bg-neutral-700 text-neutral-100 border border-neutral-600'
                   : 'bg-neutral-900 border border-neutral-700 text-neutral-400 hover:text-neutral-200 hover:border-neutral-600'
@@ -223,7 +223,7 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
             <button
               onClick={() => handleSubmit()}
               disabled={loading}
-              className="px-8 py-2.5 bg-neutral-200 hover:bg-white disabled:bg-neutral-800 disabled:text-neutral-600 text-neutral-900 rounded text-sm font-semibold transition-colors"
+              className="w-full sm:w-auto px-8 py-2.5 bg-neutral-200 hover:bg-white disabled:bg-neutral-800 disabled:text-neutral-600 text-neutral-900 rounded text-sm font-semibold transition-colors flex items-center justify-center"
             >
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send'}
             </button>
@@ -275,7 +275,7 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
           )}
 
           {/* Examples */}
-          <div className="flex items-center gap-2 text-xs pt-2">
+          <div className="flex flex-wrap items-center gap-2 text-xs pt-2">
             <span className="text-neutral-500 font-medium">Quick Examples:</span>
             {[
               { label: 'GitHub User', url: 'https://api.github.com/users/octocat' },
