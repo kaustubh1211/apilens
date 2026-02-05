@@ -5,48 +5,56 @@ import Link from 'next/link';
 
 export default function HowItWorks() {
   return (
-    <section id="how-it-works" className="py-24 bg-slate-50">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="how-it-works" className="py-32  bg-white">
+      <div className="max-w-6xl mx-auto px-6">
         {/* Section Header */}
         <div className="text-center mb-20">
-          <h2 className="text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-            Three steps to 
-            <span className='bg-gradient-to-b from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800 ml-5 mr-3'>
-
-            visual 
-            </span>
+          <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-5 leading-tight tracking-tight">
+            Three steps to{' '}
+            <span className="relative inline-block">
+              <span className="relative z-10">visual</span>
+              {/* Smooth organic wave underline */}
+              <svg 
+                className="absolute -bottom-1 left-0 w-full h-3 text-slate-900" 
+                viewBox="0 0 100 12" 
+                preserveAspectRatio="none"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+              >
+                <path d="M2,8 Q25,2 50,6 T98,4" />
+              </svg>
+            </span>{' '}
             clarity
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            From API request to beautiful visualization in seconds
+          <p className="text-lg text-slate-500 max-w-xl mx-auto">
+            From raw API JSON to beautiful visualization in seconds.
           </p>
         </div>
 
         {/* Steps */}
-        <div className="relative max-w-5xl mx-auto">
-          {/* Connection Line */}
-          <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -translate-y-1/2 -z-10" />
-          
-          <div className="grid lg:grid-cols-3 gap-12 lg:gap-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-3 gap-6">
             <Step
-              number="1"
-              icon={<Send className="w-6 h-6" />}
+              number="01"
+              icon={<Send className="w-5 h-5" strokeWidth={1.5} />}
               title="Send Request"
-              description="Enter your API endpoint or paste custom JSON. Supports GET, POST, PUT, DELETE with custom headers."
+              description="Enter your API endpoint or paste JSON. Supports all HTTP methods with custom headers."
             />
             
             <Step
-              number="2"
-              icon={<Sparkles className="w-6 h-6" />}
+              number="02"
+              icon={<Sparkles className="w-5 h-5" strokeWidth={1.5} />}
               title="Auto Process"
-              description="Our engine instantly parses your JSON and intelligently determines the best visualization method."
+              description="The engine parses your JSON and determines the best visualization method."
             />
             
             <Step
-              number="3"
-              icon={<Eye className="w-6 h-6" />}
+              number="03"
+              icon={<Eye className="w-5 h-5" strokeWidth={1.5} />}
               title="Explore Data"
-              description="Switch between tree, graph, and table views. Filter, sort, and export your data with ease."
+              description="Switch between tree, graph, and table views. Filter, sort, and export with ease."
             />
           </div>
         </div>
@@ -55,10 +63,10 @@ export default function HowItWorks() {
         <div className="text-center mt-16">
           <Link
             href="/app"
-            className="inline-flex items-center gap-2 px-8 py-4  bg-gradient-to-b from-blue-500 to-blue-700 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-blue-800"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-colors"
           >
-            Try it now — it's free
-            <ArrowRight className="w-5 h-5" />
+            Try it now
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
@@ -73,19 +81,18 @@ function Step({ number, icon, title, description }: {
   description: string;
 }) {
   return (
-    <div className="relative">
-      {/* Step Number Badge */}
-      <div className="absolute -top-4 -left-4 w-10 h-10 bg-slate-900 rounded-full flex items-center justify-center text-white font-bold text-lg shadow-md z-10">
-        {number}
-      </div>
-      
-      <div className="bg-white border border-slate-200 rounded-xl p-8 hover:border-slate-300 hover:shadow-md transition-all h-full">
-        <div className="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center text-white mb-6">
+    <div className="p-6 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors">
+      <div className="flex items-start justify-between mb-8">
+        <div className="w-10 h-10 border border-slate-200 rounded-lg flex items-center justify-center text-slate-600">
           {icon}
         </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-3">{title}</h3>
-        <p className="text-sm text-slate-600 leading-relaxed">{description}</p>
+        <span className="text-sm font-mono text-slate-300">
+          {number}
+        </span>
       </div>
+      
+      <h3 className="text-lg font-semibold text-slate-900 mb-2">{title}</h3>
+      <p className="text-sm text-slate-500 leading-relaxed">{description}</p>
     </div>
   );
 }
