@@ -69,8 +69,8 @@ export default function Hero() {
             transition={{ duration: 1, delay: 0.5, type: "spring", stiffness: 50 }}
             className="relative"
           >
-            <div className="rounded-2xl border border-slate-200 shadow-2xl overflow-hidden bg-white/50 backdrop-blur-sm p-2">
-              <div className="rounded-xl overflow-hidden border border-slate-100 bg-slate-50">
+            <div className=" overflow-hidden   p-2">
+              <div className="rounded-xl overflow-hidden  ">
                  <img 
                   src="hero/hero-preview.png" 
                   alt="ApiLens Dashboard Preview" 
@@ -79,7 +79,7 @@ export default function Hero() {
               </div>
             </div>
             {/* Decorative Glow */}
-            <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl -z-10 rounded-full opacity-50" />
+            {/* <div className="absolute -inset-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl -z-10 rounded-full opacity-50" /> */}
           </motion.div>
 
         </div>
