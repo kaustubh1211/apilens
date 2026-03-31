@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Loader2, Plus, X, Code, Link as LinkIcon } from 'lucide-react';
+import { userData } from '@/data/JsonExample';
 
 interface ApiFormProps {
   onResponse: (response: any) => void;
@@ -17,29 +18,7 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
   const [loading, setLoading] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
   const [headers, setHeaders] = useState<Array<{ key: string; value: string }>>([]);
-  const [customJson, setCustomJson] = useState(`{
-  "users": [
-    {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john@example.com",
-      "profile": {
-        "age": 30,
-        "city": "New York"
-      }
-    },
-    {
-      "id": 2,
-      "name": "Jane Smith",
-      "email": "jane@example.com",
-      "profile": {
-        "age": 25,
-        "city": "Los Angeles"
-      }
-    }
-  ],
-  "total": 2
-}`);
+  const [customJson, setCustomJson] = useState(JSON.stringify(userData,null , 2) );
   const [jsonError, setJsonError] = useState('');
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
 
@@ -122,29 +101,7 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
 
   const loadJsonExample = () => {
     setMode('json');
-    setCustomJson(`{
-  "users": [
-    {
-      "id": 1,
-      "name": "John Doe",
-      "email": "john@example.com",
-      "profile": {
-        "age": 30,
-        "city": "New York"
-      }
-    },
-    {
-      "id": 2,
-      "name": "Jane Smith",
-      "email": "jane@example.com",
-      "profile": {
-        "age": 25,
-        "city": "Los Angeles"
-      }
-    }
-  ],
-  "total": 2
-}`);
+    setCustomJson( JSON.stringify(userData, null ,2));
   };
 
   const addHeader = () => setHeaders([...headers, { key: '', value: '' }]);
