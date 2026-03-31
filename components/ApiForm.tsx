@@ -3,9 +3,12 @@
 import { useState, useEffect } from 'react';
 import { Loader2, Plus, X, Code, Link as LinkIcon } from 'lucide-react';
 import { userData } from '@/data/JsonExample';
+import { ApiResponse, HttpMethod } from '@/types/api';
+import { useApiRequest } from '@/hooks/useApiReq';
+import { useJsonHandler } from '@/hooks/useJsonHandler';
 
 interface ApiFormProps {
-  onResponse: (response: any) => void;
+  onResponse: (response: ApiResponse) => void;
   onError: (error: string) => void;
 }
 
@@ -14,104 +17,82 @@ type InputMode = 'url' | 'json';
 export default function ApiForm({ onResponse, onError }: ApiFormProps) {
   const [mode, setMode] = useState<InputMode>('url');
   const [url, setUrl] = useState('https://jsonplaceholder.typicode.com/users');
-  const [method, setMethod] = useState<'GET' | 'POST' | 'PUT' | 'DELETE'>('GET');
-  const [loading, setLoading] = useState(false);
+  const [method, setMethod] = useState<HttpMethod>('GET');
+  // const [loading, setLoading] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
   const [headers, setHeaders] = useState<Array<{ key: string; value: string }>>([]);
-  const [customJson, setCustomJson] = useState(JSON.stringify(userData,null , 2) );
-  const [jsonError, setJsonError] = useState('');
+
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    const { sendRequest, loading } = useApiRequest();
+  const { json, setJson, parseJson, error } = useJsonHandler(userData);
 
-    // Handle custom JSON mode
-    if (mode === 'json') {
-      try {
-        const parsed = JSON.parse(customJson);
-        const response = {
+ const handleSubmit = async () => {
+    try {
+      if (mode === 'json') {
+        const parsed = parseJson();
+        if (!parsed) return;
+
+        onResponse({
           data: parsed,
           status: 200,
           size: JSON.stringify(parsed).length,
           time: 0,
-        };
-        onResponse(response);
-        setJsonError('');
-      } catch (err) {
-        setJsonError('Invalid JSON format');
-        onError('Invalid JSON format');
-      }
-      return;
-    }
-
-    // Handle URL mode
-    if (!url.trim()) {
-      onError('Please enter a URL');
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const startTime = Date.now();
-      
-      const requestHeaders: Record<string, string> = {};
-      headers.forEach(({ key, value }) => {
-        if (key.trim() && value.trim()) {
-          requestHeaders[key.trim()] = value.trim();
-        }
-      });
-      
-      const response = await fetch('/api/fetch', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, method, headers: requestHeaders }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch');
+        });
+        return;
       }
 
-      const result = await response.json();
-      const endTime = Date.now();
+      if (!url) {
+        onError('URL is required');
+        return;
+      }
 
-      onResponse({ ...result, time: endTime - startTime });
-    } catch (error) {
-      onError('Failed to fetch API');
-    } finally {
-      setLoading(false);
+      const headerObj = Object.fromEntries(
+        headers.filter(h => h.key && h.value).map(h => [h.key, h.value])
+      );
+
+      const res = await sendRequest(url, method, headerObj);
+      onResponse(res);
+
+    } catch (err: any) {
+      onError(err.message);
     }
   };
 
-  // Auto-run on initial load
-  useEffect(() => {
-    if (!hasInitialLoad) {
-      setHasInitialLoad(true);
-      handleSubmit();
-    }
-  }, []);
 
-  const loadExample = (exampleUrl: string) => {
-    setMode('url');
-    setUrl(exampleUrl);
-    setMethod('GET');
-    setHeaders([]);
-    setShowHeaders(false);
-  };
+  const addHeader = () => {
+  setHeaders([...headers, { key: '', value: '' }]);
+};
 
-  const loadJsonExample = () => {
-    setMode('json');
-    setCustomJson( JSON.stringify(userData, null ,2));
-  };
+const removeHeader = (index: number) => {
+  setHeaders(headers.filter((_, i) => i !== index));
+};
 
-  const addHeader = () => setHeaders([...headers, { key: '', value: '' }]);
-  const removeHeader = (index: number) => setHeaders(headers.filter((_, i) => i !== index));
-  const updateHeader = (index: number, field: 'key' | 'value', value: string) => {
-    const newHeaders = [...headers];
-    newHeaders[index][field] = value;
-    setHeaders(newHeaders);
-  };
+const updateHeader = (index: number, field: 'key' | 'value', value: string) => {
+  const newHeaders = [...headers];
+  newHeaders[index][field] = value;
+  setHeaders(newHeaders);
+};
 
+const loadExample = (exampleUrl: string) => {
+  setMode('url');
+  setUrl(exampleUrl);
+  setMethod('GET');
+  setHeaders([]);
+};
+
+const loadJsonExample = () => {
+  setMode('json');
+  setJson(JSON.stringify(userData, null, 2));
+};
+
+ useEffect(()=>{
+      if(!hasInitialLoad){
+        handleSubmit();
+        setHasInitialLoad(true)
+      }
+
+})
   return (
     <div className="space-y-4">
       {/* Mode Tabs */}
@@ -259,16 +240,16 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
               Paste your JSON here
             </label>
             <textarea
-              value={customJson}
+              value={json}
               onChange={(e) => {
-                setCustomJson(e.target.value);
-                setJsonError('');
+                setJson(e.target.value);
+
               }}
               placeholder='{"key": "value"}'
               className="w-full h-64 px-4 py-3 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded placeholder-neutral-600 focus:border-neutral-500 focus:outline-none text-sm font-mono resize-none"
             />
-            {jsonError && (
-              <p className="text-xs text-red-400">{jsonError}</p>
+            {error && (
+              <p className="text-xs text-red-400">{error}</p>
             )}
           </div>
 
