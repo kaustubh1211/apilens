@@ -1,0 +1,29 @@
+"use client"
+
+// import { useAuth } from "@/context/AuthContext"
+import {useAuth} from "../contex/AuthContext"
+import { getTokenFromSession, refreshAndStoreToken } from "../libs/authService"
+
+export const useAuthToken = () => {
+  const { user } = useAuth()
+
+  const getToken = async (): Promise<string | null> => {
+    if (!user) return null
+
+    // Try session first
+    const cached = getTokenFromSession()
+    if (cached) return cached
+
+    // Re-fetch if session was cleared
+    return await refreshAndStoreToken(user)
+  }
+
+  // Helper: returns headers ready for your API calls
+  const authHeaders = async (): Promise<Record<string, string>> => {
+    const token = await getToken()
+    if (!token) return {}
+    return { Authorization: `Bearer ${token}` }
+  }
+
+  return { getToken, authHeaders, user }
+}
