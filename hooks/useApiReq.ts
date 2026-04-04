@@ -14,11 +14,11 @@ export const useApiRequest = () => {
     const start = Date.now();
 
     try {
-      const data = await fetchApi({ url, method, headers });
+      const result = await fetchApi({ url, method, headers });
       return {
-        data,
-        status: 200,
-        size: JSON.stringify(data).length,
+        data: result.data,
+        status: result.status || 200,
+        size: result.size || JSON.stringify(result.data).length,
         time: Date.now() - start,
       };
     } finally {

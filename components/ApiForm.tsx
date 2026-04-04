@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Plus, X, Code, Link as LinkIcon } from 'lucide-react';
 import { userData } from '@/data/JsonExample';
 import { ApiResponse, HttpMethod } from '@/types/api';
 import { useApiRequest } from '@/hooks/useApiReq';
 import { useJsonHandler } from '@/hooks/useJsonHandler';
+import ModeTabs from './api-form/ModeTabs';
+import UrlSection from './api-form/UrlSection';
+import HeadersSection from './api-form/HeadersSection';
+import JsonSection from './api-form/JsonSection';
 
 interface ApiFormProps {
   onResponse: (response: ApiResponse) => void;
@@ -18,16 +21,14 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
   const [mode, setMode] = useState<InputMode>('url');
   const [url, setUrl] = useState('https://jsonplaceholder.typicode.com/users');
   const [method, setMethod] = useState<HttpMethod>('GET');
-  // const [loading, setLoading] = useState(false);
   const [showHeaders, setShowHeaders] = useState(false);
   const [headers, setHeaders] = useState<Array<{ key: string; value: string }>>([]);
-
   const [hasInitialLoad, setHasInitialLoad] = useState(false);
 
-    const { sendRequest, loading } = useApiRequest();
+  const { sendRequest, loading } = useApiRequest();
   const { json, setJson, parseJson, error } = useJsonHandler(userData);
 
- const handleSubmit = async () => {
+  const handleSubmit = async () => {
     try {
       if (mode === 'json') {
         const parsed = parseJson();
@@ -53,222 +54,76 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
 
       const res = await sendRequest(url, method, headerObj);
       onResponse(res);
-
     } catch (err: any) {
       onError(err.message);
     }
   };
 
+  useEffect(() => {
+    if (!hasInitialLoad) {
+      handleSubmit();
+      setHasInitialLoad(true);
+    }
+  }, [hasInitialLoad]);
 
-  const addHeader = () => {
-  setHeaders([...headers, { key: '', value: '' }]);
-};
+  const loadExample = (exampleUrl: string) => {
+    setMode('url');
+    setUrl(exampleUrl);
+    setMethod('GET');
+    setHeaders([]);
+    setShowHeaders(false);
+  };
 
-const removeHeader = (index: number) => {
-  setHeaders(headers.filter((_, i) => i !== index));
-};
+  const loadJsonExample = () => {
+    setMode('json');
+    setJson(JSON.stringify(userData, null, 2));
+  };
 
-const updateHeader = (index: number, field: 'key' | 'value', value: string) => {
-  const newHeaders = [...headers];
-  newHeaders[index][field] = value;
-  setHeaders(newHeaders);
-};
+  const addHeader = () => setHeaders([...headers, { key: '', value: '' }]);
+  const removeHeader = (index: number) => setHeaders(headers.filter((_, i) => i !== index));
+  const updateHeader = (index: number, field: 'key' | 'value', value: string) => {
+    const newHeaders = [...headers];
+    newHeaders[index][field] = value;
+    setHeaders(newHeaders);
+  };
 
-const loadExample = (exampleUrl: string) => {
-  setMode('url');
-  setUrl(exampleUrl);
-  setMethod('GET');
-  setHeaders([]);
-};
-
-const loadJsonExample = () => {
-  setMode('json');
-  setJson(JSON.stringify(userData, null, 2));
-};
-
- useEffect(()=>{
-      if(!hasInitialLoad){
-        handleSubmit();
-        setHasInitialLoad(true)
-      }
-
-})
   return (
     <div className="space-y-4">
-      {/* Mode Tabs */}
-      <div className="flex gap-2 border-b border-neutral-800 pb-3">
-        <button
-          onClick={() => setMode('url')}
-          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t transition-colors ${
-            mode === 'url'
-              ? 'bg-neutral-800 text-neutral-100 border-b-2 border-neutral-400'
-              : 'text-neutral-500 hover:text-neutral-300'
-          }`}
-        >
-          <LinkIcon className="w-4 h-4" />
-          API Request
-        </button>
-        <button
-          onClick={() => setMode('json')}
-          className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t transition-colors ${
-            mode === 'json'
-              ? 'bg-neutral-800 text-neutral-100 border-b-2 border-neutral-400'
-              : 'text-neutral-500 hover:text-neutral-300'
-          }`}
-        >
-          <Code className="w-4 h-4" />
-          Custom JSON
-        </button>
-      </div>
+      <ModeTabs mode={mode} onModeChange={setMode} />
 
-      {/* URL Mode */}
       {mode === 'url' && (
-        <div className="space-y-3">
-          {/* Method + URL Row */}
-          <div className="flex flex-col sm:flex-row gap-2">
-            <select
-              value={method}
-              onChange={(e) => setMethod(e.target.value as any)}
-              disabled={loading}
-              className="w-full sm:w-28 px-3 py-2.5 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded focus:border-neutral-500 focus:outline-none text-sm font-semibold"
-            >
-              <option>GET</option>
-              <option>POST</option>
-              <option>PUT</option>
-              <option>DELETE</option>
-            </select>
-
-            <input
-              type="text"
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://api.example.com/endpoint"
-              disabled={loading}
-              className="w-full sm:flex-1 px-4 py-2.5 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded placeholder-neutral-600 focus:border-neutral-500 focus:outline-none text-sm font-mono"
-            />
-
-            <button
-              onClick={() => setShowHeaders(!showHeaders)}
-              className={`w-full sm:w-auto px-4 py-2.5 rounded text-sm font-medium transition-colors ${
-                showHeaders || headers.length > 0
-                  ? 'bg-neutral-700 text-neutral-100 border border-neutral-600'
-                  : 'bg-neutral-900 border border-neutral-700 text-neutral-400 hover:text-neutral-200 hover:border-neutral-600'
-              }`}
-            >
-              Headers {headers.length > 0 && `(${headers.length})`}
-            </button>
-
-            <button
-              onClick={() => handleSubmit()}
-              disabled={loading}
-              className="w-full sm:w-auto px-8 py-2.5 bg-neutral-200 hover:bg-white disabled:bg-neutral-800 disabled:text-neutral-600 text-neutral-900 rounded text-sm font-semibold transition-colors flex items-center justify-center"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Send'}
-            </button>
-          </div>
-
-          {/* Headers Section */}
-          {showHeaders && (
-            <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-4 space-y-2">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">Request Headers</span>
-                <button
-                  onClick={addHeader}
-                  className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-neutral-200"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  Add
-                </button>
-              </div>
-              
-              {headers.length === 0 && (
-                <p className="text-neutral-600 text-xs py-2">No headers added</p>
-              )}
-              
-              {headers.map((header, index) => (
-                <div key={index} className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Header Key"
-                    value={header.key}
-                    onChange={(e) => updateHeader(index, 'key', e.target.value)}
-                    className="flex-1 px-3 py-2 bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded placeholder-neutral-600 focus:border-neutral-500 focus:outline-none font-mono"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Header Value"
-                    value={header.value}
-                    onChange={(e) => updateHeader(index, 'value', e.target.value)}
-                    className="flex-1 px-3 py-2 bg-neutral-800 border border-neutral-700 text-neutral-200 text-sm rounded placeholder-neutral-600 focus:border-neutral-500 focus:outline-none font-mono"
-                  />
-                  <button
-                    onClick={() => removeHeader(index)}
-                    className="p-2 text-neutral-500 hover:text-red-400 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Examples */}
-          <div className="flex flex-wrap items-center gap-2 text-xs pt-2">
-            <span className="text-neutral-500 font-medium">Quick Examples:</span>
-            {[
-              { label: 'GitHub User', url: 'https://api.github.com/users/octocat' },
-              { label: 'Users List', url: 'https://jsonplaceholder.typicode.com/users' },
-              { label: 'Single Post', url: 'https://jsonplaceholder.typicode.com/posts/1' },
-            ].map((example) => (
-              <button
-                key={example.label}
-                onClick={() => loadExample(example.url)}
-                className="px-3 py-1.5 text-xs bg-neutral-900 hover:bg-neutral-800 text-neutral-400 hover:text-neutral-200 rounded border border-neutral-800 transition-colors"
-              >
-                {example.label}
-              </button>
-            ))}
-          </div>
-        </div>
+        <>
+          <UrlSection
+            method={method}
+            url={url}
+            loading={loading}
+            showHeaders={showHeaders}
+            headersCount={headers.length}
+            onMethodChange={setMethod}
+            onUrlChange={setUrl}
+            onToggleHeaders={() => setShowHeaders(!showHeaders)}
+            onSubmit={handleSubmit}
+            onLoadExample={loadExample}
+          />
+          <HeadersSection
+            headers={headers}
+            showHeaders={showHeaders}
+            onToggleHeaders={() => setShowHeaders(!showHeaders)}
+            onAddHeader={addHeader}
+            onRemoveHeader={removeHeader}
+            onUpdateHeader={updateHeader}
+          />
+        </>
       )}
 
-      {/* JSON Mode */}
       {mode === 'json' && (
-        <div className="space-y-3">
-          <div className="space-y-2">
-            <label className="text-xs font-semibold text-neutral-400 uppercase tracking-wide">
-              Paste your JSON here
-            </label>
-            <textarea
-              value={json}
-              onChange={(e) => {
-                setJson(e.target.value);
-
-              }}
-              placeholder='{"key": "value"}'
-              className="w-full h-64 px-4 py-3 bg-neutral-900 border border-neutral-700 text-neutral-200 rounded placeholder-neutral-600 focus:border-neutral-500 focus:outline-none text-sm font-mono resize-none"
-            />
-            {error && (
-              <p className="text-xs text-red-400">{error}</p>
-            )}
-          </div>
-
-          <div className="flex items-center justify-between">
-            <button
-              onClick={loadJsonExample}
-              className="text-xs text-neutral-500 hover:text-neutral-300 underline"
-            >
-              Load example JSON
-            </button>
-            
-            <button
-              onClick={() => handleSubmit()}
-              className="px-8 py-2.5 bg-neutral-200 hover:bg-white text-neutral-900 rounded text-sm font-semibold transition-colors"
-            >
-              Visualize
-            </button>
-          </div>
-        </div>
+        <JsonSection
+          json={json}
+          error={error}
+          onJsonChange={setJson}
+          onLoadExample={loadJsonExample}
+          onSubmit={handleSubmit}
+        />
       )}
     </div>
   );

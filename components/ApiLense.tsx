@@ -22,10 +22,17 @@ export default function ApiLensApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [responseKey, setResponseKey] = useState(0);
+
   const handleResponse = (response: any) => {
     setResponseData(response);
     setSearchQuery('');
-    setResponseKey(prev => prev + 1); // Increment to force graph re-render
+    setResponseKey(prev => prev + 1);
+
+    const analysis = analyzeData(response.data);
+    if (analysis.suggestedView) {
+      setActiveTab(analysis.suggestedView as any);
+    }
+
     toast.success('Response received');
   };
 
@@ -34,17 +41,18 @@ export default function ApiLensApp() {
   };
 
   const analysis = responseData ? analyzeData(responseData.data) : null;
-  const showTableTab = analysis?.suggestedView === 'table';
+  const showTableTab = analysis?.suggestedView === 'table' || (analysis?.type === 'array' && analysis.itemCount! > 0);
 
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Top Bar */}
       <div className="border-b border-neutral-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 text-neutral-400 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Back</span>
           </Link>
+          
           <Link href="/" className="flex items-center gap-2 sm:gap-3 group min-w-0">
             <Image
               src="/logo/api-lens.png"
@@ -59,7 +67,6 @@ export default function ApiLensApp() {
             </span>
           </Link>
 
-          {/* spacer to keep center alignment */}
           <div className="w-10 sm:w-16" />
         </div>
       </div>
@@ -74,7 +81,6 @@ export default function ApiLensApp() {
         {/* Response */}
         {responseData && (
           <>
-            {/* Stats */}
             {!isFullscreen && (
               <StatsPanel
                 data={responseData.data}
@@ -84,7 +90,6 @@ export default function ApiLensApp() {
               />
             )}
 
-            {/* Viewer */}
             <div className={`bg-neutral-950 border border-neutral-900 rounded-lg overflow-hidden ${
               isFullscreen ? 'fixed inset-0 z-50 rounded-none' : ''
             }`}>
@@ -102,7 +107,6 @@ export default function ApiLensApp() {
                 />
               </div>
 
-              {/* Tabs */}
               {!isFullscreen && (
                 <ViewTabs 
                   activeTab={activeTab} 
@@ -114,7 +118,7 @@ export default function ApiLensApp() {
                 />
               )}
 
-              {/* Content */}
+              {/* Content Areas */}
               <div className={isFullscreen ? 'h-[calc(100vh-80px)]' : ''}>
                 {activeTab === 'tree' && (
                   <div className={`p-3 sm:p-6 overflow-auto custom-scrollbar ${

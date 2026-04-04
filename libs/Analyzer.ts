@@ -12,26 +12,29 @@ export function analyzeData(data: any): AnalysisResult {
 
   // Array of objects → Table view
   if (Array.isArray(data) && data.length > 0) {
-    const firstItem = data[0];
-    
-    if (typeof firstItem === 'object' && firstItem !== null && !Array.isArray(firstItem)) {
-      // Check if all items have similar structure
-      const firstKeys = Object.keys(firstItem);
-      const allSimilar = data.every(item => 
-        typeof item === 'object' && 
-        item !== null &&
-        Object.keys(item).length > 0
-      );
+    // Check if at least some items are objects (to justify a table view)
+    const hasObjects = data.some(item => 
+      typeof item === 'object' && 
+      item !== null && 
+      !Array.isArray(item)
+    );
 
-      if (allSimilar) {
-        return {
-          type: 'array',
-          suggestedView: 'table',
-          itemCount: data.length,
-          depth,
-          keys: firstKeys,
-        };
-      }
+    if (hasObjects) {
+      // Collect all keys from all objects to see what columns we might have
+      const allKeys = new Set<string>();
+      data.forEach(item => {
+        if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+          Object.keys(item).forEach(key => allKeys.add(key));
+        }
+      });
+
+      return {
+        type: 'array',
+        suggestedView: 'table',
+        itemCount: data.length,
+        depth,
+        keys: Array.from(allKeys),
+      };
     }
 
     return {
