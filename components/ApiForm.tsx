@@ -9,6 +9,7 @@ import ModeTabs from './api-form/ModeTabs';
 import UrlSection from './api-form/UrlSection';
 import HeadersSection from './api-form/HeadersSection';
 import JsonSection from './api-form/JsonSection';
+import { useApiWithRateLimit } from '@/hooks/useRateLimit';
 
 interface ApiFormProps {
   onResponse: (response: ApiResponse) => void;
@@ -27,7 +28,6 @@ export default function ApiForm({ onResponse, onError }: ApiFormProps) {
 
   const { sendRequest, loading } = useApiRequest();
   const { json, setJson, parseJson, error } = useJsonHandler(userData);
-
   const handleSubmit = async () => {
     try {
       if (mode === 'json') {

@@ -15,6 +15,7 @@ import { analyzeData } from '@/libs/Analyzer';
 import { toast } from 'sonner';
 import { Code2, ArrowLeft, X } from 'lucide-react';
 import Image from 'next/image';
+import { useApiWithRateLimit } from '@/hooks/useRateLimit';
 
 export default function ApiLensApp() {
   const [responseData, setResponseData] = useState<any>(null);
@@ -22,6 +23,7 @@ export default function ApiLensApp() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [responseKey, setResponseKey] = useState(0);
+  const { call, rateLimitInfo } =  useApiWithRateLimit()
 
   const handleResponse = (response: any) => {
     setResponseData(response);
@@ -36,10 +38,19 @@ export default function ApiLensApp() {
     toast.success('Response received');
   };
 
-  const handleError = (error: string) => {
-    toast.error(error);
-  };
+ const handleError = (error: string) => {
+  if (error.includes('Rate limit') || error.includes('429')) {
+    // Extract retry seconds if present
+    const match = error.match(/(\d+)s/);
+    const seconds = match ? match[1] : '60';
+    toast.error(`⚠️ Rate limit reached — retry in ${seconds}s`, {
+      duration: 5000,
 
+    });
+  } else {
+    toast.error(error);
+  }
+};
   const analysis = responseData ? analyzeData(responseData.data) : null;
   const showTableTab = analysis?.suggestedView === 'table' || (analysis?.type === 'array' && analysis.itemCount! > 0);
 
