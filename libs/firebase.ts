@@ -1,5 +1,5 @@
-import { initializeApp, getApps } from "firebase/app"
-import { getAuth } from "firebase/auth"
+import { initializeApp, getApps, getApp, FirebaseApp } from "firebase/app"
+import { getAuth, Auth } from "firebase/auth"
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,7 +11,14 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
-// Prevent re-initializing on hot reload
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-export const auth = getAuth(app)
+// Skip initialization during SSR prerender (no API key available)
+let app: FirebaseApp | null = null
+let auth: Auth | null = null
+
+if (firebaseConfig.apiKey) {
+  app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp()
+  auth = getAuth(app)
+}
+
+export { auth }
 export default app
