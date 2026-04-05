@@ -6,10 +6,17 @@ import {
   signOut as firebaseSignOut,
   onAuthStateChanged,
   User,
+  Auth,
 } from "firebase/auth"
 import { auth } from "./firebase"
 
 const googleProvider = new GoogleAuthProvider()
+
+// ── Guard helper ───────────────────────────────────────────────
+const requireAuth = (): Auth => {
+  if (!auth) throw new Error("Auth not initialized")
+  return auth
+}
 
 // ── Token helpers ──────────────────────────────────────────────
 const TOKEN_KEY = "apilense_token"
@@ -32,37 +39,42 @@ export const refreshAndStoreToken = async (user: User): Promise<string> => {
 
 // ── Google OAuth ───────────────────────────────────────────────
 export const signInWithGoogle = async () => {
-  const result = await signInWithPopup(auth, googleProvider)
+  const result = await signInWithPopup(requireAuth(), googleProvider)
   await refreshAndStoreToken(result.user)
   return result.user
 }
 
 // ── Email / Password ───────────────────────────────────────────
 export const signInWithEmail = async (email: string, password: string) => {
-  const result = await signInWithEmailAndPassword(auth, email, password)
+  const result = await signInWithEmailAndPassword(requireAuth(), email, password)
   await refreshAndStoreToken(result.user)
   return result.user
 }
 
 export const signUpWithEmail = async (email: string, password: string) => {
-  const result = await createUserWithEmailAndPassword(auth, email, password)
+  const result = await createUserWithEmailAndPassword(requireAuth(), email, password)
   await refreshAndStoreToken(result.user)
   return result.user
 }
 
 // ── Sign out ───────────────────────────────────────────────────
 export const signOut = async () => {
-  await firebaseSignOut(auth)
+  await firebaseSignOut(requireAuth())
   clearTokenFromSession()
 }
 
 // ── Auth state observer ────────────────────────────────────────
-export const onAuthChange = (callback: (user: User | null) => void) =>
-  onAuthStateChanged(auth, async (user) => {
+export const onAuthChange = (callback: (user: User | null) => void) => {
+  if (!auth) {
+    callback(null)
+    return () => {}
+  }
+  return onAuthStateChanged(auth, async (user) => {
     if (user) {
-      await refreshAndStoreToken(user) // keep token fresh
+      await refreshAndStoreToken(user)
     } else {
       clearTokenFromSession()
     }
     callback(user)
   })
+}
