@@ -34,7 +34,7 @@ export default function FlowJourneyMap({ nodes, edges, results }: FlowJourneyMap
   const [hoveredEdgeIdx, setHoveredEdgeIdx] = useState<number | null>(null);
   const [enteredAt, setEnteredAt] = useState<Record<string, number>>({});
   const startRef = useRef<number>(performance.now());
-  const rafRef = useRef<number>();
+  const rafRef = useRef<number | undefined>(undefined);
 
   const successNodes = nodes.filter(n => results[n.id]?.status === 'success');
   const totalTime = successNodes.reduce((s, n) => s + (results[n.id]?.response?.time ?? 0), 0);
