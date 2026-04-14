@@ -3,8 +3,8 @@
 import { Network, Table2, FileJson, GitBranch } from 'lucide-react';
 
 interface ViewTabsProps {
-  activeTab: 'tree' | 'table' | 'raw' | 'graph';
-  onTabChange: (tab: 'tree' | 'table' | 'raw' | 'graph') => void;
+  activeTab: 'tree' | 'table' | 'raw' | 'graph' | 'flow';
+  onTabChange: (tab: 'tree' | 'table' | 'raw' | 'graph'| 'flow') => void;
   showTable?: boolean;
 }
 
@@ -14,6 +14,7 @@ export default function ViewTabs({ activeTab, onTabChange, showTable = false }: 
     ...(showTable ? [{ id: 'table' as const, label: 'Table', icon: Table2 }] : []),
     { id: 'graph' as const, label: 'Graph', icon: GitBranch },
     { id: 'raw' as const, label: 'Raw', icon: FileJson },
+    { id: 'flow' as const, label: 'Flow', icon: FileJson },
   ];
 
   return (

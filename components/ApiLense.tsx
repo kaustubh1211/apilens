@@ -16,10 +16,11 @@ import { toast } from 'sonner';
 import { Code2, ArrowLeft, X } from 'lucide-react';
 import Image from 'next/image';
 import { useApiWithRateLimit } from '@/hooks/useRateLimit';
+import FlowBuilder from './flow/FlowBuilder';
 
 export default function ApiLensApp() {
   const [responseData, setResponseData] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'tree' | 'table' | 'raw' | 'graph'>('tree');
+  const [activeTab, setActiveTab] = useState<'tree' | 'table' | 'raw' | 'graph' | 'flow'>('tree')
   const [searchQuery, setSearchQuery] = useState('');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [responseKey, setResponseKey] = useState(0);
@@ -158,6 +159,12 @@ export default function ApiLensApp() {
                     <RawView key={responseKey} data={responseData.data} />
                   </div>
                 )}
+
+                {activeTab === 'flow' && (
+  <div className="bg-neutral-950 border border-neutral-900 rounded-lg p-4 sm:p-6">
+    <FlowBuilder />
+  </div>
+)}
               </div>
             </div>
           </>
